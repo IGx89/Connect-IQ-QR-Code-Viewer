@@ -3,6 +3,7 @@ using Toybox.Communications as Comm;
 using Toybox.Application as App;
 using Toybox.System as Sys;
 using Toybox.Graphics as Gfx;
+using Toybox.Math;
 
 class QRCodeViewerView extends Ui.View {
 
@@ -13,6 +14,8 @@ class QRCodeViewerView extends Ui.View {
 
 	var requestCounter = 0;
 	var image = null;
+	var imageWidth = 0;
+	var imageHeight = 0;
 
 	 // Set up the responseCallback function to return an image or null
 	function onReceiveImage(responseCode, data) {
@@ -32,6 +35,10 @@ class QRCodeViewerView extends Ui.View {
 
 	function initialize() {
 		View.initialize();
+		
+		// Doing as much prework as possible to avoid hitting the watchdog counter
+		// when generating the QR code itself.
+		QRMath.staticInitialize();
 	}
 
 	// Load your resources here
@@ -56,7 +63,7 @@ class QRCodeViewerView extends Ui.View {
 		}
 		size = app.getProperty("size");
 		if(size == 0) {
-			size = maxWidth<maxHeight?maxWidth:maxHeight;
+			size = min(maxWidth, maxHeight);
 		}
 	}
 
@@ -67,7 +74,17 @@ class QRCodeViewerView extends Ui.View {
 		var app = App.getApp();
 		var data  = app.getProperty("data");
 
-		if(data != null) {
+		if (data != null) {
+			var qr = QRCode.getMinimumQRCode(data, ErrorCorrectionLevel.M);
+			
+			var cellSize = Math.floor(size / qr.getModuleCount());
+			image = qr.createImage(cellSize);
+			imageWidth = qr.getModuleCount() * cellSize;
+			imageHeight = imageWidth;
+			
+			// TODO: use the previous HTTP method of QR code generation for devices
+			// not powerful enough to generate it locally?
+			/*
 			image = null;
 			data = Communications.encodeURL(data);
 			var strUrl = app.getProperty("QRCodeGeneratingURL");
@@ -85,6 +102,7 @@ class QRCodeViewerView extends Ui.View {
 				},
 				method(:onReceiveImage)
 			);
+			*/
 		}
 	}
 
@@ -114,15 +132,15 @@ class QRCodeViewerView extends Ui.View {
 				dc.setColor (Gfx.COLOR_BLACK, Gfx.COLOR_WHITE);
 				dc.drawText(
 					(dc.getWidth()) / 2,
-					(dc.getHeight() + image.getHeight()) / 2 - offsetHeight - app.getProperty("offsetY"),
+					(dc.getHeight() + imageHeight) / 2 - offsetHeight - app.getProperty("offsetY"),
 					Gfx.FONT_MEDIUM,
 					message,
 					Gfx.TEXT_JUSTIFY_CENTER
 				);
 			}
 			dc.drawBitmap(
-				(dc.getWidth() - image.getWidth() ) / 2,
-				(dc.getHeight() - image.getHeight()) / 2 - offsetHeight - app.getProperty("offsetY"),
+				(dc.getWidth() - imageWidth ) / 2,
+				(dc.getHeight() - imageHeight) / 2 - offsetHeight - app.getProperty("offsetY"),
 				image
 			);
 		}
