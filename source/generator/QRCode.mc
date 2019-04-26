@@ -83,7 +83,7 @@ class QRCode {
     // Hoping that mask pattern 0 is good enough...
     //makeInternal(false, getBestMaskPattern());
   }
-
+/*
   private function getBestMaskPattern() {
 
     var minLostPoint = 0;
@@ -103,7 +103,7 @@ class QRCode {
 
     return pattern;
   }
-  
+*/
   private function makeInternal(test, maskPattern) {
 
     self.moduleCount = self.mTypeNumber * 4 + 17;

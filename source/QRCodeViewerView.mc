@@ -75,6 +75,8 @@ class QRCodeViewerView extends Ui.View {
 		var data  = app.getProperty("data");
 
 		if (data != null) {
+			image = null;
+		
 			var qr = QRCode.getMinimumQRCode(data, ErrorCorrectionLevel.M);
 			
 			var cellSize = Math.floor(size / qr.getModuleCount());

@@ -22,14 +22,6 @@ class BitBuffer {
     	return length;
   	}
 
-	function toString() {
-	    var strBuffer = "";
-	    for (var i = 0; i < getLengthInBits(); i++) {
-      		strBuffer += get(i) ? '1' : '0';
-	    }
-	    return strBuffer;
-  	}
-
 	function get(index) {
 		// was >>>, an unsigned shift, in Java
 		return ( (buffer[index / 8] >> (7 - index % 8) ) & 1) == 1;

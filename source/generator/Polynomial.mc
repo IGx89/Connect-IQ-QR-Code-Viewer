@@ -31,35 +31,6 @@ class Polynomial {
     return mNum.size();
   }
 
-  function toString() {
-
-    var strBuffer = "";
-
-    for (var i = 0; i < mNum.size(); i++) {
-      if (i > 0) {
-        strBuffer += ",";
-      }
-      strBuffer += mNum[i];
-    }
-
-    return strBuffer;
-  }
-
-  function toLogString() {
-
-    var strBuffer = "";
-
-    for (var i = 0; i < mNum.size(); i++) {
-      if (i > 0) {
-        strBuffer += ",";
-      }
-      strBuffer += QRMath.glog(mNum[i]);
-
-    }
-
-    return strBuffer;
-  }
-
   function multiply(e) {
     var num = emptyArray(mNum.size() + e.getLength() - 1);
 
