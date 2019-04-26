@@ -23,6 +23,16 @@ function emptyArray(len) {
 	return arr;
 }
 
+function emptyByteArray(len) {
+	var arr = new[len]b;
+	
+	for( var i=0; i<len; i++) {
+		arr[i] = 0;
+	}
+	
+	return arr;
+}
+
 function twoDimensionalArray(dim1, dim2) {
 	// Shout out to all the Java programmers in the house
 	var array = new [dim1];

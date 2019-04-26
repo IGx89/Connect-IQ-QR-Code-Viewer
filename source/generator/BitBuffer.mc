@@ -11,7 +11,7 @@ class BitBuffer {
 
 	function initialize() {
 	    inclements = 32;
-	    buffer = emptyArray(inclements);
+	    buffer = emptyByteArray(inclements);
 	}
 
 	function getBuffer() {
@@ -37,7 +37,7 @@ class BitBuffer {
  	function putBit(bit) {
 
 	    if (length == buffer.size() * 8) {
-	      	buffer.addAll(emptyArray(inclements));
+	      	buffer.addAll(emptyByteArray(inclements));
 	    }
 	
 	    if (bit) {
