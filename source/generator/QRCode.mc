@@ -247,12 +247,12 @@ class QRCode {
 
     for (var i = 0; i < 18; i++) {
       var mod = !test && ( (bits >> i) & 1) == 1;
-      modules[i / 3][i % 3 + moduleCount - 8 - 3] = mod;
+      modules[i / 3][i % 3 + moduleCount - 15] = mod;
     }
 
     for (var i = 0; i < 18; i++) {
       var mod = !test && ( (bits >> i) & 1) == 1;
-      modules[i % 3 + moduleCount - 8 - 3][i / 3] = mod;
+      modules[i % 3 + moduleCount - 15][i / 3] = mod;
     }
   }
 

@@ -30,32 +30,47 @@ class Polynomial {
   function getLength() {
     return mNum.size();
   }
+  
+  function clone() {
+  	return mNum.slice(0, null);
+  }
 
   function multiply(e) {
-    var num = emptyArray(mNum.size() + e.getLength() - 1);
+    var eLength = e.getLength();
+  
+    var num = emptyArray(mNum.size() + eLength - 1);
 
     for (var i = 0; i < mNum.size(); i++) {
-      for (var j = 0; j < e.getLength(); j++) {
-        num[i + j] ^= QRMath.gexp(QRMath.glog(mNum[i]) + QRMath.glog(e.get(j)));
+      var pGLog = QRMath.glog(mNum[i]);
+      for (var j = 0; j < eLength; j++) {
+        num[i + j] ^= QRMath.gexp(pGLog + QRMath.glog(e.get(j)));
       }
     }
 
     return new Polynomial(num, 0);
   }
   
-  function mod(e) {
-    if (mNum.size() - e.getLength() < 0) {
-      return self;
-    }
-
-    var ratio = QRMath.glog(mNum[0]) - QRMath.glog(e.get(0));
-
-    var num = mNum.slice(0, null);
+	function mod(e) {
+		var eLength = e.getLength();
+		
+		var eGLogs = new[eLength];
+		for (var i=0; i<eLength; i++) {
+			eGLogs[i] = QRMath.glog(e.get(i));
+		}
+	
+		var p = self;
+		while (p.getLength() - eLength >= 0) {
+			var num = p.clone();
+		
+			var ratio = QRMath.glog(num[0]) - eGLogs[0];
+			
+			for (var i = 0; i < eLength; i++) {
+				num[i] ^= QRMath.gexp(eGLogs[i] + ratio);
+			}
+	    
+			p = new Polynomial(num, 0);
+		}
     
-    for (var i = 0; i < e.getLength(); i++) {
-      num[i] ^= QRMath.gexp(QRMath.glog(e.get(i)) + ratio);
-    }
-
-    return new Polynomial(num, 0).mod(e);
-  }
+		return p;
+	}
 }
