@@ -141,11 +141,11 @@ class QRCode {
 	  }
 
       while (true) {
+        var moduleRow = modules[row];
 
         for (var c = 0; c < 2; c++) {
 
-          if (modules[row][col - c] == null) {
-
+          if (moduleRow[col - c] == null) {
             var dark = false;
 
             if (byteIndex < data.size()) {
@@ -159,7 +159,7 @@ class QRCode {
               dark = !dark;
             }
 
-            modules[row][col - c] = dark;
+            moduleRow[col - c] = dark;
             bitIndex--;
 
             if (bitIndex == -1) {
@@ -344,15 +344,16 @@ class QRCode {
 
   private static function createBytes(buffer, rsBlocks) {
 
+    var rsBlocksSize = rsBlocks.size();
     var offset = 0;
 
     var maxDcCount = 0;
     var maxEcCount = 0;
 
-    var dcdata = new[rsBlocks.size()];
-    var ecdata = new[rsBlocks.size()];
+    var dcdata = new[rsBlocksSize];
+    var ecdata = new[rsBlocksSize];
 
-    for (var r = 0; r < rsBlocks.size(); r++) {
+    for (var r = 0; r < rsBlocksSize; r++) {
 
       var dcCount = rsBlocks[r].getDataCount();
       var ecCount = rsBlocks[r].getTotalCount() - dcCount;
@@ -379,14 +380,13 @@ class QRCode {
     }
 
     var totalCodeCount = 0;
-    for (var i = 0; i < rsBlocks.size(); i++) {
+    for (var i = 0; i < rsBlocksSize; i++) {
       totalCodeCount += rsBlocks[i].getTotalCount();
     }
 
     var data = new[totalCodeCount];
 
     var index = 0;
-    var rsBlocksSize = rsBlocks.size();
 
     for (var i = 0; i < maxDcCount; i++) {
       for (var r = 0; r < rsBlocksSize; r++) {
@@ -441,15 +441,18 @@ class QRCode {
 			 :palette=>[Graphics.COLOR_BLACK,
                         Graphics.COLOR_WHITE]} );
         var dc = image.getDc();
+        
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
+        dc.clear();
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_BLACK);
 
-		var color;
 	    for (var col = 0; col < moduleCount; col++) {
 	      var y = col * cellSize;
 	    
 	      for (var row = 0; row < moduleCount; row++) {
-	      	  color = self.modules[row][col] ? Graphics.COLOR_BLACK : Graphics.COLOR_WHITE;
-	          dc.setColor(color, color);
-	          dc.fillRectangle(row * cellSize, y, moduleCount, moduleCount);
+	          if (self.modules[row][col]) {
+	          	dc.fillRectangle(row * cellSize, y, cellSize, cellSize);
+	          }
 	      }
 	    }
 	
